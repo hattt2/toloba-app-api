@@ -11,36 +11,8 @@ env:
   SERVICE_NAME: ${{ vars.GCR_SERVICE_NAME }}
 
 jobs:
-  build:
-    name: Build Node App
-    runs-on: ubuntu-latest
-    # Jamaat wise environment
-    environment: toloba-app
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@master
-
-      - name: Setup Node.js (NPM)
-        uses: actions/setup-node@master
-        with:
-          node-version: "14.15.1"
-
-      - name: Use cached node_modules
-        uses: actions/cache@master
-        with:
-          path: node_modules
-          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            nodeModules-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        env:
-          CI: false
-
   deploy-gcr:
     name: Deploy to GCR
-    needs: build
     runs-on: ubuntu-latest
     # Jamaat wise environment
     environment: toloba-app
