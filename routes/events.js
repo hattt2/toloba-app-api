@@ -79,8 +79,7 @@ function encodeLink(link) {
     {
       link: link,
     },
-    process.env.JWT_PRIVATE_KEY,
-    { expiresIn: 1 * 60 }
+    process.env.JWT_PRIVATE_KEY
   );
 }
 
