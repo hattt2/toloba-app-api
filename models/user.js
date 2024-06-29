@@ -75,7 +75,6 @@ const userSchema = new mongoose.Schema({
   },
   magicToken: {
     type: String,
-    required: true,
     minlength: 4,
     maxlength: 255,
   },
