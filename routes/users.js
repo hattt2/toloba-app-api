@@ -41,7 +41,11 @@ router.put("/", [auth, validate(validateUserForEdit)], async (req, res) => {
   const token = user.generateAuthToken();
   return res
     .header("x-auth-token", token)
-    .send(successResponse(_.omit(user.toObject(), ["password"])));
+    .send(
+      successResponse(
+        _.omit(user.toObject(), ["password", "magicToken", "__v"])
+      )
+    );
 });
 
 module.exports = router;

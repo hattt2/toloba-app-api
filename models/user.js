@@ -73,6 +73,12 @@ const userSchema = new mongoose.Schema({
     minlength: 4,
     maxlength: 255,
   },
+  magicToken: {
+    type: String,
+    required: true,
+    minlength: 4,
+    maxlength: 255,
+  },
   mobileNumber: {
     type: String,
     match: /^\+91\d{10}$/,
@@ -168,6 +174,7 @@ function validateUser(user) {
       .regex(/^\+91\d{10}$/)
       .allow(null, ""),
     mobileNumber: Joi.string().regex(/^\+91\d{10}$/),
+    magicToken: Joi.string().min(4).max(255),
     tanzeemFileNumber: Joi.string().allow(null, ""),
     sector: Joi.string().allow(null, ""),
     subSector: Joi.string().allow(null, ""),
@@ -232,6 +239,7 @@ function validateUserForEdit(user) {
       .allow(null, ""),
     mobileNumber: Joi.string().regex(/^\+91\d{10}$/),
     password: Joi.string().min(4).max(8),
+    magicToken: Joi.string().min(4).max(255),
     roles: Joi.object(),
     superAdmin: Joi.boolean(),
     tanzeemFileNumber: Joi.string().allow(null, ""),
@@ -255,7 +263,7 @@ async function findUserById(id, includePassword = false) {
       return await User.findById(id);
     }
 
-    return await User.findById(id).select("-password -__v");
+    return await User.findById(id).select("-password -__v -magicToken");
   } catch (error) {
     console.log(error.message);
     return null;

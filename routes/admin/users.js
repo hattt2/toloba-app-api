@@ -111,7 +111,11 @@ router.post(
     await User.populate(user, "createdBy");
     await User.populate(user, "updatedBy");
 
-    return res.send(successResponse(_.omit(user.toObject(), ["password"])));
+    return res.send(
+      successResponse(
+        _.omit(user.toObject(), ["password", "magicToken", "__v"])
+      )
+    );
   }
 );
 
@@ -159,6 +163,7 @@ router.put(
       "hofItsNumber",
       "jamaat",
       "password",
+      "magicToken",
       "mobileNumber",
       "whatsappNumber",
       "member",
@@ -184,7 +189,11 @@ router.put(
       .populate("createdBy", userAttribs)
       .populate("updatedBy", userAttribs);
 
-    return res.send(successResponse(_.omit(result.toObject(), ["password"])));
+    return res.send(
+      successResponse(
+        _.omit(result.toObject(), ["password", "magicToken", "__v"])
+      )
+    );
   }
 );
 
