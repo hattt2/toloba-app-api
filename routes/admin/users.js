@@ -24,6 +24,7 @@ const {
   validateUser,
   validateUserForBulkInsert,
   validateUserForEdit,
+  validateUserForBulkEdit,
 } = require("../../models/user");
 
 // constants
@@ -194,6 +195,44 @@ router.put(
         _.omit(result.toObject(), ["password", "magicToken", "__v"])
       )
     );
+  }
+);
+
+// Bulk update users
+router.put(
+  "/bulk",
+  [auth, hasPermission("USERS", "EDIT")],
+  validate(validateUserForBulkEdit),
+  async (req, res) => {
+    const attribs = ["magicToken"];
+
+    try {
+      let users = req.body || [];
+      const result = [];
+
+      for (let x = 0; x < users.length; x++) {
+        const user = _.pick(users[x], attribs);
+        user.updatedAt = Date.now();
+        user.updatedBy = req.user._id;
+
+        const updatedUser = await User.findOneAndUpdate(
+          { itsNumber: user.itsNumber },
+          user,
+          {
+            new: true,
+          }
+        )
+          .populate("createdBy", userAttribs)
+          .populate("updatedBy", userAttribs);
+
+        result.push(updatedUser);
+      }
+    } catch (e) {
+      updated = e.result.nInserted;
+      if (e.code !== 11000) console.log(`[ERROR] While bulk updation`, e);
+    }
+
+    return res.send(successResponse(`${updated} user(s) updated.`));
   }
 );
 

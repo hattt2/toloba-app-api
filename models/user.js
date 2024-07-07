@@ -256,6 +256,17 @@ function validateUserForEdit(user) {
   return Joi.validate(user, squema, { abortEarly: false });
 }
 
+function validateUserForBulkEdit(users) {
+  const squema = Joi.array().items({
+    itsNumber: Joi.string()
+      .required()
+      .regex(/^\d{8}$/),
+    magicToken: Joi.string().min(4).max(255),
+  });
+
+  return Joi.validate(users, squema, { abortEarly: false });
+}
+
 async function findUserById(id, includePassword = false) {
   try {
     if (includePassword) {
@@ -274,3 +285,4 @@ module.exports.validateUser = validateUser;
 module.exports.validateUserForBulkInsert = validateUserForBulkInsert;
 module.exports.validateUserForEdit = validateUserForEdit;
 module.exports.findUserById = findUserById;
+module.exports.validateUserForBulkEdit = validateUserForBulkEdit;
