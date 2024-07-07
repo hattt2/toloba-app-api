@@ -199,18 +199,19 @@ router.put(
 );
 
 // Bulk update users
-router.put(
-  "/bulk",
+router.post(
+  "/bulkEdit",
   [auth, hasPermission("USERS", "EDIT")],
   validate(validateUserForBulkEdit),
   async (req, res) => {
     const attribs = ["magicToken"];
+    let updated = 0;
 
-    try {
-      let users = req.body || [];
-      const result = [];
+    let users = req.body || [];
+    const result = [];
 
-      for (let x = 0; x < users.length; x++) {
+    for (let x = 0; x < users.length; x++) {
+      try {
         const usr = users[x];
         const user = _.pick(usr, attribs);
         user.updatedAt = Date.now();
@@ -227,10 +228,10 @@ router.put(
           .populate("updatedBy", userAttribs);
 
         result.push(updatedUser);
+        updated++;
+      } catch (e) {
+        if (e.code !== 11000) console.log(`[ERROR] While bulk updation`, e);
       }
-    } catch (e) {
-      updated = e.result.nInserted;
-      if (e.code !== 11000) console.log(`[ERROR] While bulk updation`, e);
     }
 
     return res.send(successResponse(`${updated} user(s) updated.`));
