@@ -211,12 +211,13 @@ router.put(
       const result = [];
 
       for (let x = 0; x < users.length; x++) {
-        const user = _.pick(users[x], attribs);
+        const usr = users[x];
+        const user = _.pick(usr, attribs);
         user.updatedAt = Date.now();
         user.updatedBy = req.user._id;
 
         const updatedUser = await User.findOneAndUpdate(
-          { itsNumber: user.itsNumber },
+          { itsNumber: usr.itsNumber },
           user,
           {
             new: true,
